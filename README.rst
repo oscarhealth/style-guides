@@ -5,7 +5,7 @@
 .. begin
 	
 Documentation lives at `Read the Docs
-<https://oscarstyle.readthedocs.org/>`_, the markup on `GitHub
+<https://oscar-style.readthedocs.org/>`_, the markup on `GitHub
 <https://github.com/oscarhealth/style-guides>`_.
 
 	
