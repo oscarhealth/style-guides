@@ -1,0 +1,5 @@
+_build
+_templates
+_static
+.DS_Store
+.cache
