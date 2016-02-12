@@ -51,7 +51,7 @@ Bad
 .. code-block:: python
 
    # pylint: disable=C0302
-	  
+
 Good
 ++++
 
@@ -82,7 +82,7 @@ Bad
 .. code-block:: python
 
    from geordi.services.base import OscarServiceBase
- 
+
    class ExampleService(OscarServiceBase):
        pass
 
@@ -104,7 +104,7 @@ Good
 .. code-block:: python
 
    import geordi.services.base as geordi_base
-  
+
    class ExampleService(geordi_base.OscarServiceBase):
        pass
 
@@ -127,10 +127,10 @@ Do not import in function bodies
 
 - Often this is done to circumvent circular imports. Refactor these
   instead.
-  
+
 - Rarely this may be done to avoid side effects in imported third
   party modules. This is an acceptable exception.
-  
+
 - Rarely this may be done to avoid loading modules. This may be
   acceptable if the system is otherwise not used or imported anywhere
   else. Example: debug middleware.
@@ -147,7 +147,7 @@ Deliberately order imports
 
 - Organize imports so they are easy to find. Use three sections
   separated by a new line. The three sections (in order) are:
-  
+
   - Standard Library Imports
 
   - Third Party Imports
@@ -248,7 +248,7 @@ Prefer newer syntax, use generators where possible
 
 - Use the newer dict comprehension syntax ``{x:y for x, y in foo}``
   versus the old style syntax ``dict(x, y for x, y in foo)``.
-  
+
 - Prefer generator comprehensions to list comprehension when possible.
 
 Lambda
@@ -264,7 +264,7 @@ Beware the binding
 
 - If you need to bind to a variable in an outer scope, you probably
   need to use the form ``lambda x=x: f(x)``.
-  
+
 - See discussion here: http://markmail.org/message/fypalne4rp5curta or
   here: http://docs.python-guide.org/en/latest/writing/gotchas/
 
@@ -321,10 +321,10 @@ Use @property versus getter/setter methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Use ``@property`` to override property access.
-  
+
 - Do not use java-style property accessors, e.g. ``get_foo`` or
   ``set_foo``.
-  
+
 - Do not use ``@property`` for attributes that require heavy
   computation (ie: parsing json). Let attribute access signal to a
   developer that accessing this value is essentially free.
@@ -342,10 +342,10 @@ Avoid mutable class properties except where explicitly needed
 - Setting properties on a class can be used as a default value for
   instances which is overwritten on the instance when set by an
   instance, but mutable values may be mutated class-wide.
-  
+
 - Beware of accessing class properties through an instance handle
   (e.g. self). Instance properties shadow class properties.
-  
+
 - Class properties are very nearly module globals, and should be
   treated as such.
 
@@ -357,10 +357,10 @@ Use the implicit True/False provided
 
 - Prefer testing for implicit True/False versus tests such as
   ``len(foo) == 0``.
-  
+
 - Implement ``__len__`` or ``__nonzero__`` when appropriate.
 
-- See: https://docs.python.org/2/library/stdtypes.html#truth-value-testing 
+- See: https://docs.python.org/2/library/stdtypes.html#truth-value-testing
 
 Use ``is`` for comparing against singletons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -376,9 +376,9 @@ Do not access magic values directly if possible
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Use ``type()`` to retrieve an object’s class/type versus ``__class__``.
-  
+
 - Not all classes contain a ``__dict__``.
-  
+
 - If there is no built-in for accessing a magic value, it may be
   accessed directly, though care should be taken to understand the
   full implications (e.g. ``__file__`` does not exist on objects
@@ -388,7 +388,7 @@ Do not call magic methods directly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Invoke magic methods via their syntax or built-ins:
-  
+
   - ``__repr__``: ``repr(foo)``
 
   - ``__lt__``: ``a < b``
@@ -426,12 +426,12 @@ Use sparingly
 
 - Decorators execute at module load time, making them a module import
   side-effect.
-  
+
 - Decorators can change anything about the decorated
   class/function/method.
-  
+
 - Decorators should be thoroughly tested and robust.
-  
+
 - A decorator provided with valid inputs should always succeed.
 
 Avoid external dependencies in decorators
@@ -449,10 +449,10 @@ Never rely on the atomicity of builtin types and functions
 - Some access in Python is guaranteed to be synchronized or atomic,
   but not all. Locks and semaphores are very cheap, use them instead
   of relying on built-in atomicity.
-  
+
 - Atomicity assumptions and guarantees change from platform to
   platform.
-  
+
 - Furthermore, assume nothing in the standard library is thread-safe
   unless it is clearly documented as synchronized or atomic
   (e.g. Queue_).
@@ -471,7 +471,7 @@ Never wait on a thread during import
 - Imports are guarded by an import lock (this is not the GIL, and it
   exists on platforms where the GIL does not) and can result in
   deadlock.
-  
+
 - See:
   https://docs.python.org/2/library/threading.html#importing-in-threaded-code
 
@@ -482,7 +482,7 @@ Beware of mixing synchronization primitives
   primitives for use on their event-driven platforms. Using primitives
   from the threading module in this case will cause a deadlock in the
   event loop.
-  
+
 - Mixing synchronization primitives may be necessary in some rare
   situations, such as mixing threaded and asynchronous code.
 
@@ -506,7 +506,7 @@ Avoid wrapping generated clients
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Abstractions around thrift clients are always going to leak.
-  
+
 - Additional functionality should be approached through free functions
   and collaborators.
 
@@ -567,7 +567,7 @@ Descriptor Protocol
 
 - Understand the implications of a non-data descriptor versus a
   data-descriptor before setting out.
-  
+
 - Descriptors are useful and powerful, but also difficult to
   debug. Each possible invocation should be thoroughly tested and
   understood. See:
@@ -601,7 +601,7 @@ Bad
   encapsulation. If a method can be implemented purely through a
   class’s public interface, consider a free function, which keeps the
   class interface minimal.
-  
+
 - Mixins are harder to extend and change later, as modifying a mixin’s
   internal interface modifies every class that uses it. Explicit
   composition relies only on the public interface of the composed
@@ -616,7 +616,7 @@ Good
   classes`_. Generally, a purely functional mixin which adapts one
   well-known interface to another well-known interface is an
   acceptable use of the mixin pattern.
-  
+
 Style Rules
 ===========
 
@@ -644,10 +644,10 @@ Docstrings
 
 - The first line of the docstring should be a summary that fits on a
   single line. This may be sufficient for simple cases.
-  
+
 - The rest of the docstring should follow, separated from the summary
   by a blank line.
-  
+
 - Parameters, exceptions, yielded values and returned values should be
   type hinted in a way that Jedi and PyDev understand.
 
@@ -682,13 +682,40 @@ Comments
 
 - If a block of code is probably going to be discussed in a code
   review, explain it in a comment.
-  
+
 - Assume the next person knows Python. Don’t describe code.
-  
+
 - Mark code that is less-than-desirable or needing some update with a
   comment using ``TODO(ldap): description``. This allows the code base
   to be searched by TODO and filtered by user. E.g. ``grep -rnH
   'TODO(waldo)' *``
+
+Calling functions
+-----------------
+
+Readability
+~~~~~~~~~~~
+
+It is recommended to use keyword args when calling a function with
+three or more args.
+
+Bad
++++
+
+.. code-block:: python
+
+   foo(bar.baz(), some_function(), blah, x, y)
+
+Good
+++++
+
+.. code-block:: python
+
+   foo(baz=bar.baz(),
+       some_result=some_function(),
+       blah=blah,
+       x=x,
+       y=y)
 
 Classes
 -------
@@ -702,10 +729,10 @@ Strings
 - Use utf-8 characters directly instead of their byte representations
   or html entity tags. Don't forget to add '# -*- coding: utf-8 -*-'
   at the top of your file. ex: u'Put é instead of \xe9'
-  
+
 - Use your best judgement with regard to readability when putting
   together strings. Simple concatenation is ok when it is very simple.
-  
+
 - When concatenating a large number of strings, either add strings to
   a list and use ``''.join(...)`` or use ``io.BytesIO``. Strings are
   immutable in Python; concatenation always allocates a new string.
@@ -724,7 +751,7 @@ Inversion of Control and Dependency Injection
   simplify testing (injectable mocks versus patching) and increase
   flexibility (injected objects and resources need only meet an
   interface).
-  
+
 - It’s a trivial one-liner to add object creation to a function that
   accepts an object as an argument, the converse requires rewriting
   the function.
@@ -742,7 +769,7 @@ Constructors
 
 - Limit the amount of “real work” done in a constructor. Dependency
   injection is a tremendous help here.
-  
+
 - If an object requires expensive initialization (e.g. the creation of
   a zookeeper session, communication over the network, file IO,
   concurrency) use a separate method to initialize the object. Also
@@ -754,12 +781,12 @@ Naming
 ------
 
 - Use a single underscore prefix to denote protected access.
-  
+
 - Use a double underscore prefix to denote private access (and effect
   name mangling).
-  
+
 - Avoid stutters: ``foo.FooThing``, ``bar.bar_function``.
-  
+
 - Avoid smurf-naming - when almost everything shares some similar
   prefix.
 
@@ -796,7 +823,7 @@ Depend on all direct dependencies
   requirements. For example, we have many wrappers around SQLAlchemy,
   but any target depending on these wrappers which uses SQLAlchemy
   should also directly depend on SQLAlchemy.
-  
+
 - Generally any import in any file in a target should be backed by a
   dependency unless it is standard library.
 
@@ -843,7 +870,7 @@ Exceptions should be isolated
   made if they were isolated to a specific application.
 
 .. _unittest.TestCase: https://docs.python.org/2/library/unittest.html#unittest.TestCase
-  
+
 .. _Queue: https://docs.python.org/2/library/queue.html
 
 .. _threading.Condition: https://docs.python.org/2/library/threading.html#condition-objects
