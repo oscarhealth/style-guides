@@ -830,20 +830,20 @@ Flag rules are related to core.flag library.
 Flag Naming
 -----------
 
-- Flag names should be lowercase (except in the case of secret values).
+- Flag names should be lowercase (except when forced, such as with secrets).
 - Don’t use stuttering names, flags are namespaced.
-   - For example: use timeline.page_size rather than timeline.timeline_page_size.
+   - For example: use ``timeline.page_size`` rather than ``timeline.timeline_page_size``.
 - In cases where a unit of measurement is not implicit, add it as a suffix to the flag.
-   - For example: use timeline_client.timeout_ms rather than timeline_client.timeout.
-   - For flags with measurements use the ANSI standard for naming abbreviations.
+   - For example: use ``timeline_client.timeout_ms`` rather than ``timeline_client.timeout``.
+   - For flags with measurements use the ANSI_ standard for naming abbreviations.
 - Be careful about default values in flags. Avoid setting things like actual
   aurora paths, kafka hosts, production api urls etc as flag default values.
   Hard failure on startup is preferable to unexpected behavior at runtime.
 - Be specific. The full namespaced flag should give people a good idea of what the flag is doing.
-   - For example: email_service.auth_key doesn’t give a good idea what or how the auth key is being used for.
-     email_service.mailgun_auth_key would be more meaningful.
+   - For example: ``email_service.auth_key`` doesn’t give a good idea what or how the auth key is being used for.
+     ``email_service.mailgun_auth_key`` would be more meaningful.
 - If a flag is specific to a vendor or service then include it in the flag name.
-   - For example: Use payments.usa_epay_url over payments.payment_url
+   - For example: Use ``payments.usa_epay_url`` over ``payments.payment_url``
 
 
 Exceptions to the Style Guide
@@ -884,3 +884,5 @@ Exceptions should be isolated
 .. _contextlib: https://docs.python.org/2/library/contextlib.html
 
 .. _pants: https://pantsbuild.github.io/
+
+.. _ANSI: http://www.engineeringtoolbox.com/ANSI-abbreviations-scientific-engineering-terms-d_1622.html
