@@ -640,6 +640,7 @@ Documentation
 
 Docstrings
 ~~~~~~~~~~
+- When in doubt, follow `PEP 257`
 
 - The first line of the docstring should be a summary that fits on a
   single line. This may be sufficient for simple cases.
@@ -655,7 +656,7 @@ Example method docstring - note the use of type hinting, as well as descriptions
 .. code-block:: python
 
    def send_message(sender, recipient, message_body, priority=None):
-       '''Send a message to a recipient.
+       """Send a message to a recipient.
 
        :param str sender: The person sending the message
        :param str recipient: The recipient of the message
@@ -666,7 +667,7 @@ Example method docstring - note the use of type hinting, as well as descriptions
        :rtype: int
        :raises ValueError: if the message_body exceeds 160 characters
        :raises TypeError: if the message_body is not a basestring
-       '''
+       """
        pass
 
 README
@@ -697,8 +698,6 @@ Classes
 
 Strings
 -------
-
-- Use 'single quotes' over "double quotes".
   
 - Use utf-8 characters directly instead of their byte representations
   or html entity tags. Don't forget to add '# -*- coding: utf-8 -*-'
