@@ -717,6 +717,15 @@ Good
        x=x,
        y=y)
 
+Exceptions
++++++++
+- While this is generally a good idea, it is not a hard and fast rule.
+  For example, well named args may be readable enough.
+
+.. code-block:: python
+
+   move_to(x_coordinate, y_coordinate, speed_per_second)
+
 Classes
 -------
 
