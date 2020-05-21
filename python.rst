@@ -789,7 +789,7 @@ Constructors
 Naming
 ------
 
-- Use a single underscore prefix to denote protected access.
+- Use a single underscore prefix to denote protected access. Reserve this for cases where use of something is *dangerous* to the user, as opposed to merely not a meaningful part of the public API surface. If you want to express a public export, do so via ``__all__``, as that is more appropriate in the Python ecosystem.
 
 - Use a double underscore prefix to denote private access (and effect
   name mangling).
