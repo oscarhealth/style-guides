@@ -13,9 +13,12 @@ auto-formatter to avoid having to worry (or even worse, argue!) about
 formatting. We recommend using it, but it does not cover everything
 here.
 
-Code of Conduct
+Code of conduct
 ===============
 
+- Be polite and respectful.
+- Don’t make assumptions—be clear and concise.
+- Your coworkers deserve a response to comments, questions or concerns, even if it is to respectfully decline or dissent.
 - Boy Scout Rule: Always check a module in cleaner than you checked it
   out. Clean-up and compliance to the style guide is the
   responsibility of whoever touches the code.
