@@ -273,9 +273,13 @@ Do not catch-all without re-raising
 Do not use ``assert`` outside of tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- Use ``raise`` instead.
+
 - The python interpreter removes ``assert``  statements when we
-  run it with the ``-O`` flag. We use that flag in production.
-  Use ``raise`` instead.
+  run it with the ``-O`` flag. This is because ``assert``
+  statements, as a language feature, are not intended to be used
+  for production logic. We plan to run our prod code with the
+  ``-O`` flag.
 
 Nested classes and functions
 ----------------------------
