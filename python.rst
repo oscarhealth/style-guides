@@ -60,7 +60,7 @@ Use pytest-style asserts in unit tests
 - Parameterize tests instead of copy-pasting or using
   for loops.
 
-    .. code-block::python
+    .. code-block:: python
 
             # Good
             @parameterized([
