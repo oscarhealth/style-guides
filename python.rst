@@ -2,35 +2,92 @@
  Python Style Guide
 ====================
 
-Goal
+Background
 ====
 
-The goal of this style-guide is to standardize the motif of Python at
-Oscar in a way that reduces the risk of bugs while increasing our
-ability to utilize the richer features of Python when necessary. In
-addition, it reduces the risk exposure from the many third party
-libraries we use. Finally, if it is true that reading code is 90% of
-programming, then we should favor readability over writability.
+The goal of this document is to guide the style of Python code at
+Oscar to reduce bugs and improve readability.
 
-Example: `Import packages and modules only, do not import objects or
-functions directly`_ may seem constrictive or verbose, but it allows
-objects in module namespaces to be mutated during execution without
-unexpected behavior due to object duplication. Examples of this in our
-current code-base are sqlalchemy-continuum and tagging.
+Many teams use the `black <https://github.com/psf/black>`_
+auto-formatter to avoid having to worry (or even worse, argue!) about
+formatting. We recommend using it, but it does not cover everything
+here.
 
 Code of Conduct
 ===============
 
-- Be polite and respectful.
-- Don’t make assumptions—be clear and concise.
-- Your co workers deserve a response to comments, questions or
-  concerns, even if it is to respectfully decline or dissent.
 - Boy Scout Rule: Always check a module in cleaner than you checked it
   out. Clean-up and compliance to the style guide is the
-  responsibility of whomever touches the code.
+  responsibility of whoever touches the code.
+- Don't Boil the Ocean: if you weren't already working on a module for a diff, you
+  probably shouldn't be cleaning it up. It confuses reviewers and makes it harder
+  to spot bugs. (Feel free to open a separate diff for the clean-up, though!)
+- Don't be afraid to ask for help or clarification. We're all
+  learning.
 
 Language Rules
 ==============
+
+Testing
+-------
+
+Use pytest-style asserts in unit tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Use ``assert`` statements in unit tests. `Our test runner
+  <https://docs.pytest.org/en/latest/assert.html>`_ will intelligently
+  report the failure, so you can avoid the many names of JUnit
+  legacy methods (self.assert*). It's easier to read and write.
+
+    .. code-block:: python
+
+        # Good
+        assert foo == bar
+        assert foo != bar
+        assert foo in bar
+        assert {1, 2, 3} == {3, 2, 1}
+        with pytest.raises(SomeException):
+            do_something()
+
+        # Bad
+        self.assertEqual(foo, bar)
+        self.assertNotEqual(foo, bar)
+        self.assertIn(foo, bar)
+        self.assertSetEqual({1, 2, 3}, {3, 2, 1})
+        with self.assertRaises(SomeException):
+            do_something()
+
+- Parameterize tests instead of copy-pasting or using
+  for loops.
+
+    .. code-block::python
+
+            # Good
+            @parameterized([
+                (2, 2, 4),
+                (2, 3, 8),
+                (1, 9, 1),
+                (0, 9, 0),
+            ])
+            def test_pow(base, exponent, expected
+               assert math.pow(base, exponent) == expected
+
+            # Bad
+            def test_pow():
+                assert math.pow(2, 2) == 4
+
+            def test_pow2():
+                assert math.pow(2, 3) == 8
+
+            def test_pow3():
+                assert math.pow(1, 9) == 1
+
+            def test_pow4():
+                assert math.pow(0, 9) == 0
+
+- `Familiarize yourself with pytest's <https://docs.pytest.org/en/7.2.x/getting-started.html#create-your-first-test>`_
+  features. For example, you can just write test functions at the top level instead of needing to subclass
+  ``unittest.TestCase``.
 
 Lint
 ----
@@ -71,10 +128,7 @@ Import packages and modules only, do not import objects or functions directly
   namespace. See:
   https://docs.python.org/2/howto/doanddont.html#from-module-import-name1-name2
 
-- Anything in a module’s namespace may be accessed by importing that
-  module, including any imported objects and modules.
-
-- Readability can be enhanced.
+- It's easier to read.
 
 Bad
 +++
@@ -108,14 +162,39 @@ Good
    class ExampleService(geordi_base.OscarServiceBase):
        pass
 
+
+
+- When you write new classes or modules, make sure to name them in a
+  way that reads well when imported this way, instead of being redundant.
+
+Good
+++++
+
+.. code-block:: python
+
+   from provider_data import kafka
+
+   kafka.BatchedConsumer(batch_size=5)
+
+Bad
++++
+
+.. code-block:: python
+
+   from provider_data import kafka_consumer
+
+   kafka_consumer.BatchedKafkaConsumer(batch_size=5)
+
+
+- As the link notes, this "don't" is much weaker than others. If a
+  module name doesn't read well, then importing the objects you need
+  may make things more readable (for example, @parameterized.parameterized).
+  Unless you're sure, though, stick to the rule.
+
 Do not use wildcard imports ``from foo import *``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- This is completely invalid if it is not done at the top of a module
-  (e.g. in a function body). See:
-  https://docs.python.org/2/howto/doanddont.html#from-module-import
-
-- This can clutter a namespace in a way that is completely out of the
+- This clutters a namespace in a way that is completely out of the
   control of the importer. Imagine redefining ``list`` or ``dict`` in
   the imported module.
 
@@ -135,12 +214,6 @@ Do not import in function bodies
   acceptable if the system is otherwise not used or imported anywhere
   else. Example: debug middleware.
 
-Only use absolute imports
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- Import modules using their fully qualified name. The only downside
-  to this is difficulty in deployment, which is solved by deploying a
-  pex.
 
 Deliberately order imports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -159,6 +232,9 @@ Deliberately order imports
   statements of the form ``import module`` should always precede
   import statements of the form ``from module import identifier``.
 
+- Your IDE should be able to do this for you (for example: PyCharm's "Optimize Imports" action).
+  If it can't, you can use the ``isort <https://pycqa.github.io/isort/>`` _ tool instead.
+
 Modules
 -------
 
@@ -168,7 +244,7 @@ Avoid global variables
 Exceptions
 ++++++++++
 
-- Constants which should be denoted by UPPER_SNAKE_CASE.
+- Constants, which should be denoted by UPPER_SNAKE_CASE.
 
 - If absolutely necessary, internalize and provide access through
   functions or accessors.
@@ -186,17 +262,6 @@ Avoid excessive side-effects
 Exceptions
 ----------
 
-
-Use ``raise MyException(“message”)`` syntax only
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- Do not use the deprecated forms:
-
-.. code-block:: python
-
-   raise MyException, "message"
-   raise "message"
-
 Do not catch-all without re-raising
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -205,19 +270,12 @@ Do not catch-all without re-raising
   ``KeyboardInterrupt``). See:
   https://docs.python.org/2/library/exceptions.html#exception-hierarchy
 
-Use naked asserts except in unit tests
+Do not use ``assert`` outside of tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Use naked asserts in code:
-
-.. code-block:: python
-
-   assert isinstance(foo, Foo)
-
-This plays nicely with Jedi and PyCharm for type hinting, and while it is a deviation from the above restriction, it is very common in Python.
-
-- Use `unittest.TestCase`_ provided ``assert*`` methods over naked
-  asserts in tests.
+- The python interpreter removes ``assert``  statements when we
+  run it with the ``-O`` flag. We use that flag in production.
+  Use ``raise`` instead.
 
 Nested classes and functions
 ----------------------------
@@ -241,13 +299,10 @@ Keep it simple
 
 - Complicated comprehensions are difficult to read and
   understand. Each component (mapping, for, filter) should fit on a
-  single line. Do not use multiple for and filter clauses.
+  single line. Do not nest comprehensions.
 
-Prefer newer syntax, use generators where possible
+Use generators where possible
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- Use the newer dict comprehension syntax ``{x:y for x, y in foo}``
-  versus the old style syntax ``dict(x, y for x, y in foo)``.
 
 - Prefer generator comprehensions to list comprehension when possible.
 
@@ -257,7 +312,7 @@ Lambda
 Keep it simple
 ~~~~~~~~~~~~~~
 
-- Generally lambdas should fit on a single line.
+- Lambdas should fit on a single line.
 
 Beware the binding
 ~~~~~~~~~~~~~~~~~~
@@ -439,6 +494,8 @@ Avoid external dependencies in decorators
 
 - Because decorators evaluate at module load time, they should not
   rely on the existence of external resources which may not exist.
+  This is a special case of the general rule that modules should not
+  have side-effects at import time.
 
 Threading/Concurrency
 ---------------------
@@ -499,46 +556,6 @@ Signals and interrupts
   Python application:
   http://snakesthatbite.blogspot.com/2010/09/cpython-threading-interrupting.html
 
-Thrift
-------
-
-Avoid wrapping generated clients
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- Abstractions around thrift clients are always going to leak.
-
-- Additional functionality should be approached through free functions
-  and collaborators.
-
-Use binary, framed transport
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- Mixing and matching transports will increase the complexity of any
-  standardized helpers (such as client context managers) by supporting
-  many transports.
-
-- Mixing and matching transports will require users to find out which
-  transport to use in each case.
-
-- Framed transport can avoid accidental memory overflows (through
-  setting maximum frame sizes).
-
-- Framed transport is available for all language/framework
-  combinations we have in use (e.g. Python+tornado, Python+threading,
-  Go).
-
-Do not use TSimpleServer
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-- TSimpleServer is single-threaded and may not respond to requests
-  when a connection is reset.
-
-Use ``auster.server``
-~~~~~~~~~~~~~~~~~~~~~
-
-- ``auster.server`` uses Twisted for robust connection and protocol
-  management.
-
 Power Features
 --------------
 
@@ -572,16 +589,6 @@ Descriptor Protocol
   debug. Each possible invocation should be thoroughly tested and
   understood. See:
   https://docs.python.org/2/howto/descriptor.html#invoking-descriptors
-
-Decorators
-~~~~~~~~~~
-
-- Decorators are tricky to get right across a variety of uses
-  (e.g. free functions versus bound methods). Consider the wrapt_
-  package.
-
-- Class decorators are typically easier to understand than
-  metaclasses, and can often solve the same problems.
 
 Monkey Patching
 ~~~~~~~~~~~~~~~
@@ -617,18 +624,17 @@ Good
   well-known interface to another well-known interface is an
   acceptable use of the mixin pattern.
 
-Style Rules
+Formatting
 ===========
+
+Many teams use the `black <https://github.com/psf/black>`_
+auto-formatter to avoid having to worry (or even worse, argue!) about
+formatting. We recommend using it.
 
 PEP 8
 -----
 
 - Follow the style recommendations in `PEP 8`_.
-
-Semicolons
-----------
-
-- Do not use semicolons.
 
 Line Length
 -----------
@@ -648,26 +654,19 @@ Docstrings
 - The rest of the docstring should follow, separated from the summary
   by a blank line.
 
-- Parameters, exceptions, yielded values and returned values should be
-  type hinted in a way that Jedi and PyDev understand.
+- Prefer type annotations over docstrings for documenting types.
 
 Example method docstring - note the use of type hinting, as well as descriptions:
 
 .. code-block:: python
 
-   def send_message(sender, recipient, message_body, priority=None):
+   def send_message(sender: str, recipient: str, message_body: str, priority: Optional[int]=None) -> int:
        """Send a message to a recipient.
 
-       :param str sender: The person sending the message
-       :param str recipient: The recipient of the message
-       :param str message_body: The body of the message
-       :param priority: The priority of the message, can be a number 1-5
-       :type priority: int or None
-       :return: the message id
-       :rtype: int
-       :raises ValueError: if the message_body exceeds 160 characters
-       :raises TypeError: if the message_body is not a basestring
-       """
+       :param priority: The priority of the message, can be a number 1-5
+       :return: the message id
+       :raises ValueError: if the message_body exceeds 160 characters
+       """
        pass
 
 README
@@ -696,8 +695,7 @@ Calling functions
 Readability
 ~~~~~~~~~~~
 
-It is recommended to use keyword args when calling a function with
-three or more args.
+Use keyword args when calling a function with three or more args.
 
 Bad
 +++
@@ -726,18 +724,14 @@ Exceptions
 
    move_to(x_coordinate, y_coordinate, speed_per_second)
 
-Classes
--------
-
-- Use Python "new-style" classes (must inherit from something, at
-  least ``object``) only. Do not use old-style classes.
 
 Strings
 -------
+
+- Prefer f-strings over ``.format()`` or ``%``.
   
 - Use utf-8 characters directly instead of their byte representations
-  or html entity tags. Don't forget to add '# -*- coding: utf-8 -*-'
-  at the top of your file. ex: u'Put é instead of \xe9'
+  or html entity tags. ex: u'Put é instead of \xe9'
 
 - Use your best judgement with regard to readability when putting
   together strings. Simple concatenation is ok when it is very simple.
@@ -761,27 +755,30 @@ Inversion of Control and Dependency Injection
   flexibility (injected objects and resources need only meet an
   interface).
 
-- It’s a trivial one-liner to add object creation to a function that
-  accepts an object as an argument, the converse requires rewriting
+- You can keep your method signatures simple by injecting the
+  dependencies in the constructor. This is a good idea for objects that
+  are instantiated once and used many times. For example, a class
+  might take a gRPC client in its constructor and use it to implement
+  its methods - this lets setup code worry about creating the client,
+  and business logic code can call the methods of the instantiated
+  class without knowing about the client.
+
+- It’s a one-liner to add object creation to a function that
+  accepts an object as an argument; the converse requires rewriting
   the function.
-
-Accessors
----------
-
-- Accessors allow property access to be caught and modified later
-  without changing access sites. However, if a significant amount of
-  work (in particular, resource allocation or io) is added around
-  property access, move that functionality to a method.
 
 Constructors
 ------------
+
+- Use `dataclasses <https://docs.python.org/3/library/dataclasses.html>`_
+  to create simple data objects.
 
 - Limit the amount of “real work” done in a constructor. Dependency
   injection is a tremendous help here.
 
 - If an object requires expensive initialization (e.g. the creation of
   a zookeeper session, communication over the network, file IO,
-  concurrency) use a separate method to initialize the object. Also
+  concurrency) use a separate classmethod to initialize the object. Also
   consider the thread/concurrency safety of this initializer
   function. Remember that an object may be created elsewhere as a
   side-effect of module import.

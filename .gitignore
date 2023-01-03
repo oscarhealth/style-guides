@@ -3,3 +3,4 @@ _templates
 _static
 .DS_Store
 .cache
+.idea
