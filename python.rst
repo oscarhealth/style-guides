@@ -168,17 +168,16 @@ Good
 
 
 
-- When you write new classes or modules, make sure to name them in a
-  way that reads well when imported this way, instead of being redundant.
+- When naming your classes and functions, avoid repeating details that are already clear from the module name.
 
 Good
 ++++
 
 .. code-block:: python
 
-   from provider_data import kafka
+   from provider_data import kafka_consumer
 
-   kafka.BatchedConsumer(batch_size=5)
+   kafka_consumer.Batched(batch_size=5)
 
 Bad
 +++
