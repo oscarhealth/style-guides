@@ -12,7 +12,7 @@ Documentation lives at `Read the Docs
 License
 =======
 
-Copyright 2016 Mulberry Health Inc.
+Copyright 2023 Mulberry Health Inc.
 
 Licensed under the `Apache License, Version
 2.0. <http://www.apache.org/licenses/LICENSE-2.0>`_
