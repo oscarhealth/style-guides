@@ -60,8 +60,8 @@ Use pytest-style asserts in unit tests
         with self.assertRaises(SomeException):
             do_something()
 
-- Parameterize tests instead of copy-pasting or using
-  for loops.
+- If the logic for testing your different inputs is identical, prefer parameterized tests
+  instead of for loops or copy paste. That way, each test can run independently.
 
     .. code-block:: python
 
@@ -91,6 +91,7 @@ Use pytest-style asserts in unit tests
 - `Familiarize yourself with pytest's <https://docs.pytest.org/en/7.2.x/getting-started.html#create-your-first-test>`_
   features. For example, you can just write test functions at the top level instead of needing to subclass
   ``unittest.TestCase``.
+- Prefer consistency with surrounding code. If you are editing a test with unittest-style asserts, and don't plan to switch all of them, write your edits in that style too.
 
 Lint
 ----
