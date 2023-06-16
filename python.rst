@@ -595,7 +595,7 @@ Descriptor Protocol
 - Descriptors are useful and powerful, but also difficult to
   debug. Each possible invocation should be thoroughly tested and
   understood. See:
-  https://docs.python.org/2/howto/descriptor.html#invoking-descriptors
+  https://docs.python.org/3/howto/descriptor.html#invoking-descriptors
 
 Monkey Patching
 ~~~~~~~~~~~~~~~
@@ -736,6 +736,9 @@ Strings
 -------
 
 - Prefer f-strings over ``.format()`` or ``%``.
+
+- Pull elaborate input strings (function calls, indexing, ", ".join, etc) into
+  named variables instead of writing them inline (as a format() arg, or in an f-string, etc)
   
 - Use utf-8 characters directly instead of their byte representations
   or html entity tags. ex: u'Put é instead of \xe9'
@@ -757,18 +760,18 @@ Resources
 Inversion of Control and Dependency Injection
 ---------------------------------------------
 
-- Inject objects and resources versus creating them. This will
-  simplify testing (injectable mocks versus patching) and increase
+- Inject objects and resources versus creating them. This
+  simplifies testing (injectable mocks versus patching) and increases
   flexibility (injected objects and resources need only meet an
   interface).
 
-- You can keep your method signatures simple by injecting the
-  dependencies in the constructor. This is a good idea for objects that
-  are instantiated once and used many times. For example, a class
+- You can simplify your method signatures by injecting
+  dependencies in the constructor, especially for objects that are
+  instantiated once and used many timees. For example, a class
   might take a gRPC client in its constructor and use it to implement
   its methods - this lets setup code worry about creating the client,
-  and business logic code can call the methods of the instantiated
-  class without knowing about the client.
+  and lets business code call the methods without knowing about which
+  gRPC client(s) they depend on.
 
 - It’s a one-liner to add object creation to a function that
   accepts an object as an argument; the converse requires rewriting
@@ -779,16 +782,14 @@ Constructors
 
 - Use `dataclasses <https://docs.python.org/3/library/dataclasses.html>`_
   to create simple data objects.
+  
+- Avoid doing failable operations like file IO or network calls in a constructor.
 
-- Limit the amount of “real work” done in a constructor. Dependency
-  injection is a tremendous help here.
-
-- If an object requires expensive initialization (e.g. the creation of
-  a zookeeper session, communication over the network, file IO,
-  concurrency) use a separate classmethod to initialize the object. Also
-  consider the thread/concurrency safety of this initializer
-  function. Remember that an object may be created elsewhere as a
-  side-effect of module import.
+- If those operations were to initialize a dependency like a database connection,
+  instead do that somewhere near main() and pass it to your constructor fully-formed.
+  
+- In simple cases (like reading an environment variable), a decent compromise can be
+  to do the IO in a ``@classmethod`` which then constructs and returns the instance.
 
 Naming
 ------
